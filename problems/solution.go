@@ -115,13 +115,6 @@ func getKth(A []int, B []int, k int) int {
 
 }
 
-func min(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
-}
-
 func longestPalindrome(s string) string {
 	max := -1
 	result := ""
@@ -360,4 +353,47 @@ func backtrackSubsetsWithDupRef(result *[][]int, tmplist *[]int, nums []int, sta
 		backtrackSubsetsWithDupRef(result, tmplist, nums, i+1)
 		*tmplist = (*tmplist)[:len(*tmplist)-1]
 	}
+}
+
+func maxProfit(k int, prices []int) int {
+	if k == 0 || len(prices) == 0 {
+		return 0
+	}
+
+	if 2*k > len(prices) {
+		result := 0
+		for i := 0; i < len(prices)-1; i++ {
+			if prices[i+1] > prices[i] {
+				result += prices[i+1] - prices[i]
+			}
+		}
+		return result
+	}
+
+	dp := make([][][]int, len(prices)+1)
+	for i := range dp {
+		dp[i] = make([][]int, k+1)
+		for j := range dp[i] {
+			dp[i][j] = make([]int, 2)
+		}
+	}
+
+	dp[0][0][1] = math.MinInt32
+
+	for i := 1; i < len(prices)+1; i++ {
+		dp[i][0][1] = max(dp[i-1][0][1], -prices[i-1])
+	}
+
+	for i := 1; i <= k; i++ {
+		dp[0][i][1] = -prices[0]
+	}
+
+	for i := 1; i < len(prices)+1; i++ {
+		for j := 1; j <= k; j++ {
+			dp[i][j][0] = max(dp[i-1][j][0], dp[i-1][j-1][1]+prices[i-1])
+			dp[i][j][1] = max(dp[i-1][j][1], dp[i-1][j][0]-prices[i-1])
+		}
+	}
+
+	return dp[len(prices)][k][0]
 }
