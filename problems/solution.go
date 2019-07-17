@@ -1,6 +1,8 @@
 package problems
 
 import (
+	"github.com/golang-collections/collections/queue"
+	"github.com/golang-collections/collections/stack"
 	"math"
 	"sort"
 	"strings"
@@ -396,4 +398,77 @@ func maxProfit(k int, prices []int) int {
 	}
 
 	return dp[len(prices)][k][0]
+}
+
+func recoverFromPreorder(S string) *TreeNode {
+	nodeQueue := queue.New()
+	depthQueue := queue.New()
+	generateNodeQueues(S, nodeQueue, depthQueue)
+	if nodeQueue.Len() == 0 {
+		return nil
+	}
+
+	nodeStack := stack.New()
+	depthStack := stack.New()
+
+	root := nodeQueue.Dequeue().(*TreeNode)
+	depth := depthQueue.Dequeue().(int)
+	nodeStack.Push(root)
+	depthStack.Push(depth)
+
+	for nodeQueue.Len() > 0 {
+		node := nodeQueue.Dequeue().(*TreeNode)
+		depth = depthQueue.Dequeue().(int)
+
+		var parent *TreeNode
+		parentDepth := -1
+		for true {
+			parent = nodeStack.Pop().(*TreeNode)
+			parentDepth = depthStack.Pop().(int)
+			if parentDepth == depth-1 {
+				break
+			}
+		}
+		if parent.Left == nil {
+			parent.Left = node
+			nodeStack.Push(parent)
+			depthStack.Push(parentDepth)
+		} else {
+			parent.Right = node
+		}
+		nodeStack.Push(node)
+		depthStack.Push(depth)
+	}
+	return root
+
+}
+
+func generateNodeQueues(S string, nodeQueue, depthQueue *queue.Queue) {
+	if len(S) == 0 {
+		return
+	}
+	isDigit := false
+	depth := 0
+	value := 0
+	for i := range S {
+		if '-' != S[i] {
+			if isDigit {
+				value = value*10 + int(S[i]-'0')
+			} else {
+				isDigit = true
+				value = int(S[i] - '0')
+			}
+		} else {
+			if !isDigit {
+				depth++
+			} else {
+				nodeQueue.Enqueue(&TreeNode{Val: value})
+				depthQueue.Enqueue(depth)
+				isDigit = false
+				depth = 1
+			}
+		}
+	}
+	nodeQueue.Enqueue(&TreeNode{Val: value})
+	depthQueue.Enqueue(depth)
 }
