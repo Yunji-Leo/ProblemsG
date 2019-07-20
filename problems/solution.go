@@ -579,3 +579,29 @@ func threeSum(nums []int) [][]int {
 	}
 	return result
 }
+
+func threeSumClosest(nums []int, target int) int {
+	sort.Ints(nums)
+	result := math.MaxInt32
+	distance := math.MaxInt32
+	for i := 0; i < len(nums)-2; i++ {
+		left := i + 1
+		right := len(nums) - 1
+		for left < right {
+			sum := nums[i] + nums[left] + nums[right]
+			if abs(sum-target) < distance {
+				result = sum
+				distance = abs(sum - target)
+			}
+			if sum == target {
+				return sum
+			}
+			if sum > target {
+				right--
+			} else {
+				left++
+			}
+		}
+	}
+	return result
+}
