@@ -549,3 +549,33 @@ func commonPrefix(left, right string) string {
 	}
 	return left[:minLength]
 }
+
+func threeSum(nums []int) [][]int {
+	sort.Ints(nums)
+	result := make([][]int, 0)
+	for i := 0; i < len(nums)-2; i++ {
+		if i == 0 || nums[i] != nums[i-1] {
+			left := i + 1
+			right := len(nums) - 1
+			for left < right {
+				if nums[i]+nums[left]+nums[right] > 0 {
+					right--
+				} else if nums[i]+nums[left]+nums[right] < 0 {
+					left++
+				} else {
+					ans := []int{nums[i], nums[left], nums[right]}
+					result = append(result, ans)
+					for left < right && nums[left] == nums[left+1] {
+						left++
+					}
+					for left < right && nums[right] == nums[right-1] {
+						right--
+					}
+					left++
+					right--
+				}
+			}
+		}
+	}
+	return result
+}
