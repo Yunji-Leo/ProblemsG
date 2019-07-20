@@ -521,3 +521,31 @@ func romanToInt(s string) int {
 	}
 	return result + roman[rune(s[len(s)-1])]
 }
+
+func longestCommonPrefix(strs []string) string {
+	if len(strs) == 0 {
+		return ""
+	}
+	return longestCommonPrefixDC(strs, 0, len(strs)-1)
+}
+
+func longestCommonPrefixDC(strs []string, l, r int) string {
+	if l == r {
+		return strs[l]
+	}
+
+	mid := (l + r) / 2
+	left := longestCommonPrefixDC(strs, l, mid)
+	right := longestCommonPrefixDC(strs, mid+1, r)
+	return commonPrefix(left, right)
+}
+
+func commonPrefix(left, right string) string {
+	minLength := min(len(left), len(right))
+	for i := 0; i < minLength; i++ {
+		if left[i] != right[i] {
+			return left[:i]
+		}
+	}
+	return left[:minLength]
+}
