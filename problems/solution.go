@@ -472,3 +472,22 @@ func generateNodeQueues(S string, nodeQueue, depthQueue *queue.Queue) {
 	nodeQueue.Enqueue(&TreeNode{Val: value})
 	depthQueue.Enqueue(depth)
 }
+
+func maxArea(height []int) int {
+	left := 0
+	right := len(height) - 1
+	result := 0
+	for left < right {
+		minH := -1
+		width := right - left
+		if height[left] <= height[right] {
+			minH = height[left]
+			left++
+		} else {
+			minH = height[right]
+			right--
+		}
+		result = max(result, minH*width)
+	}
+	return result
+}
