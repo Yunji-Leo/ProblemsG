@@ -500,3 +500,24 @@ func intToRoman(num int) string {
 
 	return M[num/1000] + C[(num%1000)/100] + X[(num%100)/10] + I[num%10]
 }
+
+func romanToInt(s string) int {
+	roman := map[rune]int{
+		'M': 1000,
+		'D': 500,
+		'C': 100,
+		'L': 50,
+		'X': 10,
+		'V': 5,
+		'I': 1,
+	}
+	result := 0
+	for i := 0; i < len(s)-1; i++ {
+		if roman[rune(s[i])] < roman[rune(s[i+1])] {
+			result -= roman[rune(s[i])]
+		} else {
+			result += roman[rune(s[i])]
+		}
+	}
+	return result + roman[rune(s[len(s)-1])]
+}
