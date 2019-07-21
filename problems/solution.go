@@ -605,3 +605,36 @@ func threeSumClosest(nums []int, target int) int {
 	}
 	return result
 }
+
+func letterCombinations(digits string) []string {
+	phone := map[uint8][]string{
+		'2': []string{"a", "b", "c"},
+		'3': []string{"d", "e", "f"},
+		'4': []string{"g", "h", "i"},
+		'5': []string{"j", "k", "l"},
+		'6': []string{"m", "n", "o"},
+		'7': []string{"p", "q", "r", "s"},
+		'8': []string{"t", "u", "v"},
+		'9': []string{"w", "x", "y", "z"},
+	}
+
+	result := make([]string, 0)
+	if len(digits) == 0 {
+		return result
+	}
+	letterCombinationsRecursive(&result, phone, digits, 0, "")
+	return result
+}
+
+func letterCombinationsRecursive(result *[]string, phone map[uint8][]string, digits string, pos int, temp string) {
+	if pos == len(digits) {
+		*result = append(*result, temp)
+		return
+	}
+
+	for _, s := range phone[digits[pos]] {
+		temp += s
+		letterCombinationsRecursive(result, phone, digits, pos+1, temp)
+		temp = temp[:len(temp)-1]
+	}
+}
