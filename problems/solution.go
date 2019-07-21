@@ -728,3 +728,22 @@ func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
 	}
 	return dummy.Next
 }
+
+func generateParenthesis(n int) []string {
+	result := make([]string, 0)
+	generateParenthesisRecursive(&result, "", 0, 0, n)
+	return result
+}
+
+func generateParenthesisRecursive(result *[]string, temp string, left, right, n int) {
+	if len(temp) == 2*n {
+		*result = append(*result, temp)
+		return
+	}
+	if left < n {
+		generateParenthesisRecursive(result, temp+"(", left+1, right, n)
+	}
+	if right < left {
+		generateParenthesisRecursive(result, temp+")", left, right+1, n)
+	}
+}
