@@ -689,3 +689,42 @@ func removeNthFromEnd(head *ListNode, n int) *ListNode {
 	second.Next = second.Next.Next
 	return dummy.Next
 }
+
+func isValid(s string) bool {
+	myStack := stack.New()
+	for i := range s {
+		if s[i] == '(' {
+			myStack.Push(')')
+		} else if s[i] == '[' {
+			myStack.Push(']')
+		} else if s[i] == '{' {
+			myStack.Push('}')
+		} else if myStack.Len() == 0 || myStack.Peek().(rune) != rune(s[i]) {
+			return false
+		} else {
+			myStack.Pop()
+		}
+	}
+	return myStack.Len() == 0
+}
+
+func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
+	dummy := &ListNode{}
+	prev := dummy
+	for l1 != nil && l2 != nil {
+		if l1.Val > l2.Val {
+			prev.Next = l2
+			l2 = l2.Next
+		} else {
+			prev.Next = l1
+			l1 = l1.Next
+		}
+		prev = prev.Next
+	}
+	if l1 != nil {
+		prev.Next = l1
+	} else {
+		prev.Next = l2
+	}
+	return dummy.Next
+}
