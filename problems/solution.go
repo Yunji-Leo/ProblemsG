@@ -1,6 +1,7 @@
 package problems
 
 import (
+	"container/heap"
 	"github.com/golang-collections/collections/queue"
 	"github.com/golang-collections/collections/stack"
 	"math"
@@ -746,4 +747,33 @@ func generateParenthesisRecursive(result *[]string, temp string, left, right, n 
 	if right < left {
 		generateParenthesisRecursive(result, temp+")", left, right+1, n)
 	}
+}
+
+func mergeKLists(lists []*ListNode) *ListNode {
+	var pq ListNodePriorityQueue
+	pq = lists
+
+	//from end
+	for i := pq.Len() - 1; i >= 0; i-- {
+		if pq[i] == nil {
+			pq.Remove(i)
+		}
+	}
+
+	heap.Init(&pq)
+
+	dummy := &ListNode{}
+	point := dummy
+
+	for pq.Len() > 0 {
+		node := heap.Pop(&pq).(*ListNode)
+		point.Next = node
+		point = point.Next
+		node = node.Next
+		if node != nil {
+			heap.Push(&pq, node)
+		}
+	}
+
+	return dummy.Next
 }
