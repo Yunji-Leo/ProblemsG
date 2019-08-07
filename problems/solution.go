@@ -777,3 +777,18 @@ func mergeKLists(lists []*ListNode) *ListNode {
 
 	return dummy.Next
 }
+
+func swapPairs(head *ListNode) *ListNode {
+	dummy := &ListNode{}
+	prev := dummy
+	prev.Next = head
+	for prev.Next != nil && prev.Next.Next != nil {
+		first := prev.Next
+		second := prev.Next.Next
+		prev.Next = second
+		first.Next = second.Next
+		second.Next = first
+		prev = first
+	}
+	return dummy.Next
+}
