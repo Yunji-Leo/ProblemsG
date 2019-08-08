@@ -813,3 +813,53 @@ func reverseKGroup(head *ListNode, k int) *ListNode {
 	}
 	return head
 }
+
+func removeDuplicates(nums []int) int {
+	if len(nums) < 2 {
+		return len(nums)
+	}
+	slow := 1
+	fast := 1
+	for fast < len(nums) {
+		if nums[fast] != nums[fast-1] {
+			nums[slow] = nums[fast]
+			slow++
+		}
+		fast++
+	}
+	return slow
+}
+
+func removeElement(nums []int, val int) int {
+	if len(nums) == 0 {
+		return 0
+	}
+	slow := 0
+	fast := 0
+	for fast < len(nums) {
+		if nums[fast] != val {
+			nums[slow] = nums[fast]
+			slow++
+		}
+		fast++
+	}
+	return slow
+}
+
+func strStr(haystack string, needle string) int {
+	if len(needle) == 0 {
+		return 0
+	}
+	for i := 0; i <= len(haystack)-len(needle); i++ {
+		j := 0
+		for ; j < len(needle); j++ {
+			if needle[j] != haystack[i+j] {
+				break
+			}
+		}
+		if j == len(needle) {
+			return i
+		}
+	}
+	return -1
+}
