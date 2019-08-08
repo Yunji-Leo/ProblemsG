@@ -1,6 +1,7 @@
 package problems
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -24,4 +25,18 @@ func TestMergeSortedList(t *testing.T) {
 	c1.Next = &c2
 
 	mergeKLists([]*ListNode{&a1, &b1, &c1})
+}
+
+func TestReverseKGroup(t *testing.T) {
+	n1 := ListNode{Val: 1}
+	n2 := ListNode{Val: 2}
+	n3 := ListNode{Val: 3}
+	n4 := ListNode{Val: 4}
+	n5 := ListNode{Val: 5}
+	n1.Next = &n2
+	n2.Next = &n3
+	n3.Next = &n4
+	n4.Next = &n5
+	head := reverseKGroup(&n1, 2)
+	fmt.Println(head.Val)
 }
