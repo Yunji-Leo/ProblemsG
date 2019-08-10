@@ -863,3 +863,44 @@ func strStr(haystack string, needle string) int {
 	}
 	return -1
 }
+
+func findSubstring(s string, words []string) []int {
+	var result []int
+	if len(words) == 0 {
+		return result
+	}
+
+	wordLength := len(words[0])
+	hashmap := make(map[string]int)
+	for _, w := range words {
+		hashmap[w]++
+	}
+
+	for i := 0; i < len(s); i++ {
+		copymap := make(map[string]int)
+		for k, v := range hashmap {
+			copymap[k] = v
+		}
+		found := true
+		for j := 1; j <= len(words); j++ {
+			end := j*wordLength + i
+			start := end - wordLength
+			if end <= len(s) {
+				sub := s[start:end]
+				if val, ok := copymap[sub]; ok && val > 0 {
+					copymap[sub]--
+				} else {
+					found = false
+					break
+				}
+			} else {
+				return result
+			}
+		}
+		if found {
+			result = append(result, i)
+		}
+	}
+
+	return result
+}

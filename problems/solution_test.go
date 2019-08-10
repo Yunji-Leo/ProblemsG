@@ -40,3 +40,7 @@ func TestReverseKGroup(t *testing.T) {
 	head := reverseKGroup(&n1, 2)
 	fmt.Println(head.Val)
 }
+
+func TestFindSubString(t *testing.T) {
+	findSubstring("barfoothefoobarfoo", []string{"foo", "bar"})
+}
