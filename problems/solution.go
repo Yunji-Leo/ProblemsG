@@ -869,7 +869,7 @@ func findSubstring(s string, words []string) []int {
 	if len(words) == 0 {
 		return result
 	}
-
+	error
 	wordLength := len(words[0])
 	hashmap := make(map[string]int)
 	for _, w := range words {
@@ -903,4 +903,35 @@ func findSubstring(s string, words []string) []int {
 	}
 
 	return result
+}
+
+func nextPermutation(nums []int) {
+	i := len(nums) - 2
+	for i >= 0 && nums[i+1] <= nums[i] {
+		i--
+	}
+	if i >= 0 {
+		j := len(nums) - 1
+		for j >= 0 && nums[j] <= nums[i] {
+			j--
+		}
+		swap(nums, i, j)
+	}
+	reverseInSlice(nums, i+1)
+}
+
+func swap(nums []int, i, j int) {
+	temp := nums[i]
+	nums[i] = nums[j]
+	nums[j] = temp
+}
+
+func reverseInSlice(nums []int, start int) {
+	i := start
+	j := len(nums) - 1
+	for i < j {
+		swap(nums, i, j)
+		i++
+		j--
+	}
 }
