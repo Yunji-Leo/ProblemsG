@@ -869,7 +869,7 @@ func findSubstring(s string, words []string) []int {
 	if len(words) == 0 {
 		return result
 	}
-	error
+
 	wordLength := len(words[0])
 	hashmap := make(map[string]int)
 	for _, w := range words {
@@ -934,4 +934,273 @@ func reverseInSlice(nums []int, start int) {
 		i++
 		j--
 	}
+}
+
+func buildTree(preorder []int, inorder []int) *TreeNode {
+	if len(preorder) == 0 || len(inorder) == 0 {
+		return nil
+	}
+	iMap := make(map[int]int)
+	for index, value := range inorder {
+		iMap[value] = index
+	}
+	length := len(preorder)
+
+	return build(preorder, 0, length, inorder, 0, length, iMap)
+}
+
+func build(preorder []int, pStart, pEnd int, inorder []int, iStart, iEnd int, iMap map[int]int) *TreeNode {
+	if pStart == pEnd {
+		return nil
+	}
+	root := &TreeNode{Val: preorder[pStart]}
+	iIndex := iMap[preorder[pStart]]
+	leftCount := iIndex - iStart
+	left := build(preorder, pStart+1, pStart+leftCount+1, inorder, iStart, iIndex-1, iMap)
+	right := build(preorder, pStart+leftCount+1, pEnd, inorder, iIndex+1, iEnd, iMap)
+	root.Left = left
+	root.Right = right
+	return root
+}
+
+func movingCount(m int, n int, k int) int {
+	if m == 0 || n == 0 {
+		return 0
+	}
+	result := 0
+	var queue [][]int
+	queue = append(queue, []int{0, 0})
+	visited := make(map[int]bool)
+	for len(queue) > 0 {
+		pos := queue[0]
+		queue = queue[1:]
+		result++
+		row := pos[0]
+		col := pos[1]
+		visited[0] = true
+		for i := 0; i < 4; i++ {
+			newRow := row + directs[i][0]
+			newCol := col + directs[i][1]
+			if newRow < 0 || newRow >= m || newCol < 0 || newCol >= n || visited[newRow*n+newCol] {
+				continue
+			}
+			if numberValue(newRow)+numberValue(newCol) <= k {
+				queue = append(queue, []int{newRow, newCol})
+				visited[newRow*n+newCol] = true
+			}
+		}
+	}
+	return result
+}
+
+var directs = [][]int{{0, 1}, {0, -1}, {1, 0}, {-1, 0}}
+
+func numberValue(number int) int {
+	var result int
+	for number > 0 {
+		result += number % 10
+		number /= 10
+	}
+	return result
+}
+
+func verifyPostorder(postorder []int) bool {
+	if len(postorder) < 3 {
+		return true
+	}
+
+	root := postorder[len(postorder)-1]
+	leftSplit := -1
+	for i := len(postorder) - 2; i >= 0; i-- {
+		if leftSplit == -1 {
+			if postorder[i] < root {
+				leftSplit = i
+			}
+		} else {
+			if postorder[i] > root {
+				return false
+			}
+		}
+	}
+
+	if verifyPostorder(postorder[:leftSplit+1]) && verifyPostorder(postorder[leftSplit+1:len(postorder)-1]) {
+		return true
+	}
+
+	return false
+}
+
+func copyRandomList(head *Node) *Node {
+	hashMap := make(map[*Node]*Node)
+
+	var dummy Node
+	dummy.Next = head
+	var prev *Node
+	for head != nil {
+		copyHead := Node{Val: head.Val}
+		if prev != nil {
+			prev.Next = &copyHead
+		}
+		prev = &copyHead
+		hashMap[head] = &copyHead
+		head = head.Next
+	}
+
+	head = dummy.Next
+	copyHead := hashMap[head]
+	for head != nil {
+		copyHead.Random = hashMap[head.Random]
+		head = head.Next
+		copyHead = copyHead.Next
+	}
+
+	return hashMap[dummy.Next]
+}
+
+type Node struct {
+	Val    int
+	Next   *Node
+	Random *Node
+}
+
+func search(nums []int, target int) int {
+	if len(nums) == 0 {
+		return 0
+	}
+
+	left, right := 0, len(nums)-1
+
+	//found most left
+	for left < right {
+		mid := left + (right-left)/2
+		if nums[mid] >= target {
+			right = mid - 1
+		} else {
+			left = mid + 1
+		}
+	}
+
+	var mostLeft int
+	if nums[left] == target {
+		mostLeft = left
+	} else {
+		if left+1 < len(nums) && nums[left+1] == target {
+			mostLeft = left + 1
+		} else {
+			return 0
+		}
+	}
+
+	left, right = 0, len(nums)-1
+
+	for left < right {
+		mid := left + (right-left)/2
+		if nums[mid] <= target {
+			left = mid + 1
+		} else {
+			right = mid - 1
+		}
+	}
+
+	var mostRight int
+	if nums[right] == target {
+		mostRight = right
+	} else {
+		if right-1 >= 0 && nums[right-1] == target {
+			mostRight = right - 1
+		} else {
+			return 0
+		}
+	}
+
+	return mostRight - mostLeft + 1
+}
+
+func reversePairs(nums []int) int {
+	var count int
+	mergeSort(nums, &count)
+	return count
+}
+
+func mergeSort(nums []int, count *int) {
+	if len(nums) <= 1 {
+		return
+	}
+	left := nums[:len(nums)/2]
+	right := nums[len(nums)/2:]
+	mergeSort(left, count)
+	mergeSort(right, count)
+
+	index, leftIdx, rightIdx := 0, 0, 0
+	for leftIdx < len(left) && rightIdx < len(right) {
+		if right[rightIdx] < left[leftIdx] {
+			nums[index] = right[rightIdx]
+			rightIdx++
+			(*count) += len(left) - leftIdx
+		} else {
+			nums[index] = left[leftIdx]
+			leftIdx++
+		}
+		index++
+	}
+
+	for leftIdx < len(left) {
+		nums[index] = left[leftIdx]
+		index++
+		leftIdx++
+	}
+
+	for rightIdx < len(right) {
+		nums[index] = right[rightIdx]
+		index++
+		rightIdx++
+	}
+}
+
+func lengthOfLongestSubstring2(s string) int {
+	hashmap := make(map[byte]int)
+	var result int
+	left, right := 0, len(s)
+	for right < len(s) {
+		hashmap[s[right]]++
+		if hashmap[s[right]] < 2 {
+			right++
+			continue
+		}
+		result = max(result, right-left)
+		for {
+			hashmap[s[left]]--
+			if hashmap[s[left]] == 1 {
+				left++
+				break
+			}
+			left++
+		}
+		right++
+	}
+	result = max(result, right-left)
+	return result
+}
+
+func oddEvenList(head *ListNode) *ListNode {
+	dummyOdd := &ListNode{}
+	dummyEven := &ListNode{}
+	oddPrev, evenPrev := dummyOdd, dummyEven
+	isOdd := true
+
+	for head != nil {
+		if isOdd {
+			oddPrev.Next = head
+			oddPrev = head
+		} else {
+			evenPrev.Next = head
+			evenPrev = head
+		}
+		isOdd = !isOdd
+		head = head.Next
+	}
+	oddPrev.Next = dummyEven.Next
+	evenPrev.Next = nil
+	return dummyOdd.Next
+
 }
